@@ -22,11 +22,10 @@ def get_last_watering_date():
     return ts
 
 def watering_service():
-    while True:
         current_water_level = get_current_water_level(WATER_I2C_ADDRESS, WATER_SENSOR_ANALOG_PIN_INPUT)
         if(current_water_level <= lower_threshold):
             refill_water_bowl()
-        sleep(10)
+        sleep(3)
                 
 def refill_water_bowl():
     current_water_level = get_current_water_level(WATER_I2C_ADDRESS, WATER_SENSOR_ANALOG_PIN_INPUT)
