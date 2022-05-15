@@ -38,6 +38,9 @@ def watering_service():
             refill_water_bowl()
         update_watering_parameters(flag_refill_impossibility)
         print(flag_refill_impossibility)
+        current_water_level = get_current_water_level(I2C_address, analog_pin_input)
+        if(current_water_level <= lower_threshold):
+            refill_water_bowl()
         sleep(3)
                 
 def refill_water_bowl():
@@ -45,6 +48,9 @@ def refill_water_bowl():
     time_refill_triggered = datetime.now()
     while not is_refill_finished(upper_threshold) and not check_refill_impossibility(time_refill_triggered):
         set_servo_angle(open_angle, servo_number)
+    if current_water_level <= lower_threshold:
+        while not is_refill_finished(upper_threshold):
+            set_servo_angle(open_angle, servo_number)
     #refill is done, set angle in initial position
     set_servo_angle(closed_angle, servo_number)
     

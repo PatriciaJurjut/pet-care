@@ -12,6 +12,8 @@ from db_connection import get_feeding_cycle_length
 
 last_feeding_time = datetime.min # TODO: get it from DB
 cycles_number = 3
+
+last_feeding_time = datetime.min # TODO: get it from DB
 cycle_length_minutes = 300 # default mode: feeding occurs every 5 hours = 300 mins
 upcoming_feeding_time = datetime.min
 
@@ -44,4 +46,5 @@ def update_feeding_parameters():
     last_feeding_time = datetime.now() # TODO: update in DB
     upcoming_feeding_time = last_feeding_time + timedelta(minutes=cycle_length_minutes)
     update_DB_feeding_parameters(last_feeding_time)
+    upcoming_feeding_time = last_feeding_time + timedelta(cycle_length_minutes)
     
