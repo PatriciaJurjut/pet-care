@@ -2,6 +2,7 @@ import RPi.GPIO as GPIO
 from time import sleep
 import time
 import smbus
+import os
 
 #servo_pin = 10
 
@@ -35,7 +36,8 @@ def set_servo_angle_bkp(angle, servo_pin):
         GPIO.cleanup()
 
 def set_servo_angle(angle, servo_number):
-    os.system("echo " + str(servo_number) + "=" + str(angle) + " > /dev/servoblaster") 
+    os.system("echo " + str(servo_number) + "=" + str(angle) + " > /dev/servoblaster")
+        
 
 #set_servo_angle(0, 3)
 
