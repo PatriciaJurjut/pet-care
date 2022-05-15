@@ -6,7 +6,7 @@ from constants import FOOD_SERVO_ANGLE_CLOSED as closed_angle
 from constants import FOOD_SERVO_NUMBER as servo_number
 from servo import set_servo_angle
 
-last_feeding_time = datetime.min
+last_feeding_time = datetime.min # TODO: get it from DB
 cycle_length_minutes = 300 # default mode: feeding occurs every 5 hours = 300 mins
 upcoming_feeding_time = datetime.min
 
@@ -27,6 +27,6 @@ def refill_food_bowl():
     
 def update_feeding_parameters():
     global upcoming_feeding_time, last_feeding_time
-    last_feeding_time = datetime.now()
+    last_feeding_time = datetime.now() # TODO: update in DB
     upcoming_feeding_time = last_feeding_time + timedelta(cycle_length_minutes)
     
