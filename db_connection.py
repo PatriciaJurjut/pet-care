@@ -71,4 +71,7 @@ def get_water_container_fill_status():
 
 def get_last_feeding_time():
     return datetime.fromtimestamp(db.child("feeding").child("lastFeedingTime").get().val())
+
+def get_manual_feeding_field():
+    return db.child("feeding").child("manualFeeding").get().val()
     
