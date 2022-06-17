@@ -2,7 +2,7 @@ from datetime import timedelta
 
 # Water constants
 WATER_I2C_ADDRESS = 0x48  # PCF8591 I2C address
-WATER_CONTROL_BYTE = 0x0  # water sensor - channel 0
+WATER_CONTROL_BYTE = 0x0  # control byte - AD converting
 WATER_SERVO_PIN = 7
 WATER_SERVO_IDENTIFIER = 0  # Pin 7 is mapped to value 0 (servoblaster)
 WATER_SERVO_ANGLE_CLOSED = 240  # 240

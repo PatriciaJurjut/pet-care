@@ -21,29 +21,19 @@ class WaterRefillMonitoring:
         self.__database_connection = DatabaseConnection()
         self.__flag_refill_impossibility = not self.__does_container_have_water()
 
-    def __get_current_water_level(self, I2C_address):
+    def __get_current_water_level(self, i2c_address):
         bus = smbus.SMBus(1)  # port I2C1
-        bus.write_byte(I2C_address, CONTROL_BYTE)  
-        value = bus.read_byte(I2C_address)
+        bus.write_byte(i2c_address, CONTROL_BYTE)
+        value = bus.read_byte(i2c_address)
         water_percentage = (value - 21) / 1.4
-        print("W: " + str(water_percentage) + "%")
-        print("adc_val=" + str(value))
         return water_percentage
-
-    # function used when working in pycharm
-
-    # def __get_current_water_level(self, I2C_address, analog_pin_input) -> int:
-    #     return 5  # TEMPORARY FOR PYCHARM. TODO: REMOVE
 
     def watering_service(self):
         if self.__does_container_have_water():
             current_water_level = self.__get_current_water_level(I2C_ADDRESS)
-            print("Water container filled: " + str(self.__does_container_have_water()))
             if current_water_level <= LOWER_THRESHOLD:
                 self.__refill_water_bowl()
                 self.__update_watering_parameters(self.__flag_refill_impossibility)
-        print("Refill impossibility: " + str(self.__flag_refill_impossibility))
-        sleep(3) #TODO
 
     def __refill_water_bowl(self):
         current_water_level = self.__get_current_water_level(I2C_ADDRESS)
@@ -52,13 +42,8 @@ class WaterRefillMonitoring:
                 time_refill_triggered):
             print(self.__flag_refill_impossibility)
             set_servo_angle(OPEN_ANGLE, SERVO_IDENTIFIER)
-            print("Water angle open")
-            #if current_water_level <= LOWER_THRESHOLD:
-                #set_servo_angle(OPEN_ANGLE, SERVO_IDENTIFIER)
-                #print("Water angle open")
         # refill is done, set angle in initial position
         set_servo_angle(CLOSED_ANGLE, SERVO_IDENTIFIER)
-        print("Water angle closed")
 
     def __does_container_have_water(self) -> bool:
         return self.__database_connection.get_water_container_fill_status()

@@ -32,7 +32,7 @@ class FoodRefillMonitoring:
     __upcoming_feeding_time: datetime
     __is_bowl_refilled_on_startup: bool
     __database_connection: DatabaseConnection
-    __flag_first_time_called: bool
+    __flag_first_time_called: bool  # marks the first time object has been instantiated
     __first_time_called: bool
 
     def __init__(self):
@@ -44,16 +44,12 @@ class FoodRefillMonitoring:
     def __init_db_variables(self):
         self.__cycle_length_minutes = self.__database_connection.get_feeding_cycle_length()
         self.__completed_cycles = self.__database_connection.get_completed_cycles()
-        print("Cycle length: " + str(self.__cycle_length_minutes))
         self.__last_feeding_time = self.__database_connection.get_last_feeding_time()
         self.__is_bowl_refilled_on_startup = self.__database_connection.get_bowl_refilled_on_startup_field()
         self.__update_upcoming_feeding_time()
-        print("Last feeding time: " + str(self.__last_feeding_time))
 
     def feeding_service(self):
         self.__init_db_variables()
-        print("UPCOMING feeding time: " + str(self.__upcoming_feeding_time))
-        print("Bowl refilled on startup: " + str(self.__is_bowl_refilled_on_startup))
         if self.__is_manual_feeding_performed():
             self.__refill_bowl_for_treat()
 
@@ -64,7 +60,6 @@ class FoodRefillMonitoring:
         elif self.__is_feeding_time_now():  # condition for cyclic feeding
             self.__refill_bowl_completely()
 
-    # Bowl is refilled for a treat (small portion) -> abt. 0.5 seconds
     def __refill_bowl_for_treat(self):
         """
             Bowl is being refilled with a portion of food, smaller than a whole ratio. \n
@@ -84,7 +79,6 @@ class FoodRefillMonitoring:
     def __update_feeding_parameters(self):
         self.__last_feeding_time = datetime.now()
         self.__completed_cycles += 1
-        print("Completed cycles: " + str(self.__completed_cycles))
         self.__flag_first_time_called = False
         self.__update_upcoming_feeding_time()
         self.__database_connection.update_db_feeding_parameters(self.__last_feeding_time, self.__completed_cycles)

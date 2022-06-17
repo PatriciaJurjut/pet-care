@@ -16,12 +16,7 @@ class DatabaseConnection:
     __db: Final[any] = __firebase.database()
 
     def get_feeding_cycle_length(self) -> int:
-        # return db.child("feeding").child("feedingCycles").child("cycleLength").get().val()
-        # global feedingCycles
-        # feedingCycles = db.child("feeding").child("feedingCycles").child("cycleLength").stream(stream_handler)
         return self.__db.child("feeding").child("feedingCycles").child("cycleLength").get().val()
-        # feedingCycles.close()
-        # print(returnVar)
 
     def get_completed_cycles(self) -> int:
         return self.__db.child("feeding").child("feedingCycles").child("completedCycles").get().val()
@@ -42,8 +37,6 @@ class DatabaseConnection:
         # print(db.child("doesContainerHaveWater").get().val())
         return self.__db.child("watering").child("doesContainerHaveWater").get().val()
 
-    # Sets a second-level nested variable's value in the database
-    # nesting is: child1 -> child2 (key) = @param value
     def update_db_timestamp(self, child1_name, child2_name, value):
         self.__db.child(child1_name).child(child2_name).set(value)
 
@@ -51,9 +44,8 @@ class DatabaseConnection:
         self.update_db_timestamp("feeding", "lastFeedingTime", datetime_to_timestamp(last_feeding_time))
         self._update_level3_nested_variable("feeding", "feedingCycles", "completedCycles", completed_cycles)
 
-    # TODO
-    def update_db_watering_parameters(self, was_watering_process_successful):
-        if was_watering_process_successful:
+    def update_db_watering_parameters(self, was_watering_process_unsuccessful):
+        if was_watering_process_unsuccessful:
             self._update_level2_nested_variable("watering", "refillImpossibility", True)
             self._update_level2_nested_variable("watering", "doesContainerHaveWater", False)
         else:
