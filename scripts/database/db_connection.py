@@ -1,5 +1,5 @@
 import pyrebase
-from scripts.utils.utils import datetime_to_timestamp
+from utils.utils import datetime_to_timestamp
 from datetime import datetime
 from typing import Final
 
@@ -54,12 +54,12 @@ class DatabaseConnection:
     # TODO
     def update_db_watering_parameters(self, was_watering_process_successful):
         if was_watering_process_successful:
+            self._update_level2_nested_variable("watering", "refillImpossibility", True)
+            self._update_level2_nested_variable("watering", "doesContainerHaveWater", False)
+        else:
             self._update_level2_nested_variable("watering", "lastWateringTime", datetime_to_timestamp(datetime.now()))
             self._update_level2_nested_variable("watering", "refillImpossibility", False)
             self._update_level2_nested_variable("watering", "doesContainerHaveWater", True)
-        else:
-            self._update_level2_nested_variable("watering", "refillImpossibility", True)
-            self._update_level2_nested_variable("watering", "doesContainerHaveWater", False)
 
     def update_db_refill_impossibility(self, is_water_container_empty):
         self._update_level2_nested_variable("watering", "refillImpossibility", is_water_container_empty)

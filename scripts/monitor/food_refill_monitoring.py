@@ -1,14 +1,14 @@
 from time import sleep
 from datetime import datetime
 from datetime import timedelta
-from scripts.utils.constants import FOOD_SERVO_ANGLE_OPEN as OPEN_ANGLE
-from scripts.utils.constants import FOOD_SERVO_ANGLE_CLOSED as CLOSED_ANGLE
-from scripts.utils.constants import FOOD_SERVO_IDENTIFIER as SERVO_IDENTIFIER
-from scripts.utils.constants import FOOD_COMPLETE_REFILL_TIME as SECONDS_FOR_COMPLETE_REFILL
-from scripts.utils.constants import FOOD_QUICK_TREAT_TIME as SECONDS_FOR_TREAT
-from scripts.utils.constants import FOOD_STANDARD_CYCLE_LENGTH as STANDARD_CYCLE_LENGTH
-from scripts.servo import set_servo_angle
-from scripts.database.db_connection import DatabaseConnection
+from utils.constants import FOOD_SERVO_ANGLE_OPEN as OPEN_ANGLE
+from utils.constants import FOOD_SERVO_ANGLE_CLOSED as CLOSED_ANGLE
+from utils.constants import FOOD_SERVO_IDENTIFIER as SERVO_IDENTIFIER
+from utils.constants import FOOD_COMPLETE_REFILL_TIME as SECONDS_FOR_COMPLETE_REFILL
+from utils.constants import FOOD_QUICK_TREAT_TIME as SECONDS_FOR_TREAT
+from utils.constants import FOOD_STANDARD_CYCLE_LENGTH as STANDARD_CYCLE_LENGTH
+from servo import set_servo_angle
+from database.db_connection import DatabaseConnection
 
 
 def operate_servo(open_angle: int, closed_angle: int, servo_id: int, seconds_until_closed: int):
@@ -32,9 +32,13 @@ class FoodRefillMonitoring:
     __upcoming_feeding_time: datetime
     __is_bowl_refilled_on_startup: bool
     __database_connection: DatabaseConnection
+    __flag_first_time_called: bool
+    __first_time_called: bool
 
     def __init__(self):
         self.__database_connection = DatabaseConnection()
+        self.__flag_first_time_called = True
+        self.__first_time_called = datetime.now()
         self.__init_db_variables()
 
     def __init_db_variables(self):
@@ -81,11 +85,15 @@ class FoodRefillMonitoring:
         self.__last_feeding_time = datetime.now()
         self.__completed_cycles += 1
         print("Completed cycles: " + str(self.__completed_cycles))
+        self.__flag_first_time_called = False
         self.__update_upcoming_feeding_time()
         self.__database_connection.update_db_feeding_parameters(self.__last_feeding_time, self.__completed_cycles)
 
     def __update_upcoming_feeding_time(self):
-        self.__upcoming_feeding_time = self.__last_feeding_time + timedelta(minutes=int(str(self.__cycle_length_minutes)))
+        if self.__flag_first_time_called:
+            self.__upcoming_feeding_time = self.__first_time_called + timedelta(minutes=int(str(self.__cycle_length_minutes)))
+        else:
+            self.__upcoming_feeding_time = self.__last_feeding_time + timedelta(minutes=int(str(self.__cycle_length_minutes)))
 
     def __is_feeding_time_now(self):
         current_time = datetime.now()
